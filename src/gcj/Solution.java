@@ -5,12 +5,13 @@ import java.io.*;
 
 public class Solution {
     private static final int M = 1_000_000_007;
+    private static Random rng = new Random();
 
     public static String testCase(int x, int w, int e) {
         char[] ans = new char[60];
         long curr = 0;
 
-        if (e == w || e) {
+        if (e == w) {
             for (int i = 0; i < 60; i++) {
                 if (i % 3 == 0) {
                     ans[i] = 'R';
@@ -154,5 +155,94 @@ public class Solution {
         long nextLong() {
             return Long.parseLong(next());
         }
+    }
+
+    private static void sort(int[] arr) {
+        int temp, idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr);
+    }
+
+    private static void sort(long[] arr) {
+        long temp;
+        int idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr);
+    }
+
+    private static <T> void sort(T[] arr) {
+        T temp;
+        int idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr);
+    }
+
+    private static <T> void sort(T[] arr, Comparator<? super T> cmp) {
+        T temp;
+        int idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr, cmp);
+    }
+
+    private static <T extends Comparable<? super T>> void sort(ArrayList<T> list) {
+        T temp;
+        int idx;
+
+        for (int i = list.size() - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = list.get(i);
+            list.set(i, list.get(idx));
+            list.set(idx, temp);
+        }
+
+        Collections.sort(list);
+    }
+
+    private static <T> void sort(ArrayList<T> list, Comparator<? super T> cmp) {
+        T temp;
+        int idx;
+
+        for (int i = list.size() - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = list.get(i);
+            list.set(i, list.get(idx));
+            list.set(idx, temp);
+        }
+
+        Collections.sort(list, cmp);
     }
 }

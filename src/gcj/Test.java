@@ -5,135 +5,107 @@ import java.io.*;
 
 public class Test {
 
-    static TreeSet<Integer> set = generate();
+    static Random rng = new Random();
 
-    public static long testCase(long y) {
-        if (y < 10) {
-            return 12;
-        } else {
-            long ans = Long.MAX_VALUE;
-            String yString = Long.toString(y);
-            StringBuilder sb = new StringBuilder(), sb1;
-            long d9 = 9;
+    private static long testCase(int n, int l, int r, int[] a) {
+        long ans = 0;
+        int i, j1, j2;
 
-            for (int i = 0; i < yString.length(); i++) {
-                sb.append(yString.charAt(i));
-                long curr = Long.parseLong(sb.toString());
+        Arrays.sort(a);
 
-                ans = Math.min(ans, get(curr, y));
-                ans = Math.min(ans, get(curr + 1, y));
+        for (i = 0; i < n; i++) {
+            //find a[j] s.t. l - a[i] <= a[j] <= r - a[i]
+            //y = -x - 1 -> -y - 1 = x
+            j1 = binarySearch(a, l - a[i], true);
+            j2 = binarySearch(a, r - a[i], false);
+
+            //System.out.println(a[i] + ": " + j1 + "," + j2);
+
+            if (i < j1) {
+                ans += count(j1, j2);
+            } else if (i < j2) {
+                ans += count(i + 1, j2);
             }
+        }
 
-            for (int m = 1; m <= Long.MAX_VALUE / 10 && m <= y; m *= 10) {
-                ans = Math.min(ans, get(m, y));
-            }
+        return ans;
+    }
 
-            for (long i = d9; i <= Long.MAX_VALUE / 10 && i <= y; i = (i * 10) + 9) {
-                for (long j = i; last(j, y); j--) {
-                    ans = Math.min(ans, get(j, y));
+    private static int binarySearch(int[] arr, int key, boolean isLeft) {
+        int low = 0, high = isLeft ? arr.length : arr.length - 1;
+
+        while (low < high) {
+            int mid;
+
+            if (isLeft) {
+                mid = (low + high) / 2;
+                //find first index such that a[i] >= key
+                if (arr[mid] >= key) {
+                    high = mid;
+                } else { //arr[mid] < key
+                    low = mid + 1;
                 }
-            }
-
-            return ans;
-        }
-    }
-
-    private static boolean last(long curr, long y) {
-        long start = curr;
-        boolean added = false;
-        StringBuilder sb1 = new StringBuilder();
-        sb1.append(curr++);
-
-        while (isParseable(sb1.toString()) && Long.parseLong(sb1.toString()) <= y) {
-            added = true;
-            sb1.append(curr);
-            curr++;
-        }
-
-        if (added && isParseable(sb1.toString())) {
-            return Long.toString(start).length() != Long.toString(curr).length();
-        } else {
-            return true;
-        }
-    }
-
-    private static long get(long curr, long y) {
-        //System.out.println("Starting from " + curr);
-        boolean added = false;
-        StringBuilder sb1 = new StringBuilder();
-        sb1.append(curr++);
-
-        while (isParseable(sb1.toString()) && Long.parseLong(sb1.toString()) <= y) {
-            added = true;
-            sb1.append(curr);
-            curr++;
-        }
-
-        if (added && isParseable(sb1.toString())) {
-            //System.out.println(sb1.toString());
-            return Long.parseLong(sb1.toString());
-        } else {
-            //System.out.println();
-            return Long.MAX_VALUE;
-        }
-    }
-
-    private static boolean isParseable(String s) {
-        try {
-            long l = Long.parseLong(s);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    private static long testCaseExpected(long y) {
-        set.add(998999);
-        set.add(1234567);
-        return set.higher((int) y);
-    }
-
-    private static TreeSet<Integer> generate() {
-        int limit = 1000000;
-        TreeSet<Integer> set = new TreeSet<>();
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 1; i < 998; i++) {
-            int j = i;
-            sb = new StringBuilder(Integer.toString(j));
-
-            while (Integer.parseInt(sb.toString()) <= limit) {
-                sb.append(++j);
-
-                if (Integer.parseInt(sb.toString()) <= limit) {
-                    set.add(Integer.parseInt(sb.toString()));
+            } else {
+                mid = (low + high + 1) / 2;
+                //find first index such that a[i] <= key
+                if (arr[mid] <= key) {
+                    low = mid;
+                } else {
+                    high = mid - 1;
                 }
             }
         }
 
-        return set;
+        return low;
     }
 
-    private static int not(int b) {
-        int mask = b;
+    private static int count(int a, int b) {
+        return b - a + 1;
+    }
 
-        mask |= mask >> 1;
-        mask |= mask >> 2;
-        mask |= mask >> 4;
-        mask |= mask >> 8;
-        mask |= mask >> 16;
+    private static long testCaseExpected(int n, int l, int r, int[] a) {
+        long ans = 0;
 
-        return ~b & mask;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (l <= a[i] + a[j] && a[i] + a[j] <= r) {
+                    ans++;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    private static int[] generate(int n) {
+        int[] res = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            res[i] = 1 + rng.nextInt(100);
+        }
+
+        return res;
     }
 
     public static void main(String[] args) {
         FastScanner in = new FastScanner();
         PrintWriter out = new PrintWriter(System.out);
 
-        int t = in.nextInt();  // Scanner has functions to read ints, longs, strings, chars, etc.
-        Random rng = new Random();
+        int t = 1000;//in.nextInt();  // Scanner has functions to read ints, longs, strings, chars, etc.
+
         for (int t0 = 0; t0 <= t; ++t0) {
-            System.out.println(t0 + "," + not(t0));
+            int n = 10;
+            int l = n, r = 2 * n;
+            int[] a = generate(n);
+
+            long expected = testCaseExpected(n, l, r, a), actual = testCase(n, l, r, a);
+
+
+            if (expected != actual) {
+                System.out.println(String.format("%s, %s, %s, %s, expected: %d, actual: %d", n, l, r, Arrays.toString(a), expected, actual));
+            } else {
+                //System.out.println(String.format("%s, %s", expected, actual));
+            }
 
             //out.println(String.format("Case #%s: %s", t0, ans));
         }

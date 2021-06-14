@@ -5,94 +5,33 @@ import java.util.*;
 
 public class C {
     static int M = 1_000_000_007;
+    static Random rng = new Random();
 
     private static long testCase(int n, int l, int r, int[] a) {
         long ans = 0;
         int i, j1, j2;
 
-        Arrays.sort(a);
-
-        for (i = 0; i < n; i++) {
-            //find a[j] s.t. l - a[i] <= a[j] <= r - a[i]
-            //y = -x - 1 -> -y - 1 = x
-            j1 = binarySearch(a, l - a[i], true);
-            j2 = binarySearch(a, r - a[i], false);
-
-            //System.out.println(a[i] + ": " + j1 + "," + j2);
-
-            if (i < j1) {
-                ans += count(j1, j2);
-            } else if (i < j2) {
-                ans += count(i + 1, j2);
-            }
-        }
-
-        return ans;
-    }
-
-    private static int binarySearch(int[] arr, int key, boolean isLeft) {
-        int low = 0, high = isLeft ? arr.length : arr.length - 1;
-
-        while (low < high) {
-            int mid;
-
-            if (isLeft) {
-                mid = (low + high) / 2;
-                //find first index such that a[i] >= key
-                if (arr[mid] >= key) {
-                    high = mid;
-                } else { //arr[mid] < key
-                    low = mid + 1;
-                }
-            } else {
-                mid = (low + high + 1) / 2;
-                //find first index such that a[i] <= key
-                if (arr[mid] <= key) {
-                    low = mid;
-                } else {
-                    high = mid - 1;
-                }
-            }
-        }
-
-        return low;
-    }
-
-    private static int testCase2(int n, int l, int r, int[] a) {
-        int ans = 0;
-        int i, j1, j2;
-
-        Arrays.sort(a);
+        sort(a);
 
         i = 0;
-        j1 = 1;
-        j2 = n - 1 ;
-
-        while (j1 < n - 1 && a[i] + a[j1] < l) j1++;
-        while (j1 < j2 && a[i] + a[j2] > r) j2--;
-
-        System.out.println(j1 + "," + j2);
+        j1 = n;
+        j2 = n - 1;
 
         while (i < j2) {
-            ans += count(j1, j2);
+            while (j1 > i + 1 && a[i] + a[j1 - 1] >= l) j1--;
+            while (j2 >= j1 && a[i] + a[j2] > r) j2--;
 
+            //System.out.println(i + ", " + j1 + ", " + j2);
+
+            ans += count(Math.max(j1, i + 1), j2);
             i++;
-
-            while (i + 1 < j1 && a[i] + a[j1 - 1] >= l) j1--;
-            while (i < j2 && a[i] + a[j2] > r) j2--;
-
-            if (i == j1) {
-                j1 = i + 1;
-            }
-
-            System.out.println(j1 + "," + j2);
         }
 
         return ans;
     }
 
     private static long count(int a, int b) {
-        return b - a + 1;
+        return Math.max(0, b - a + 1);
     }
 
     public static void main(String[] args) {
@@ -157,5 +96,94 @@ public class C {
         long nextLong() {
             return Long.parseLong(next());
         }
+    }
+
+    private static void sort(int[] arr) {
+        int temp, idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr);
+    }
+
+    private static void sort(long[] arr) {
+        long temp;
+        int idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr);
+    }
+
+    private static <T> void sort(T[] arr) {
+        T temp;
+        int idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr);
+    }
+
+    private static <T> void sort(T[] arr, Comparator<? super T> cmp) {
+        T temp;
+        int idx;
+
+        for (int i = arr.length - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = arr[i];
+            arr[i] = arr[idx];
+            arr[idx] = temp;
+        }
+
+        Arrays.sort(arr, cmp);
+    }
+
+    private static <T extends Comparable<? super T>> void sort(ArrayList<T> list) {
+        T temp;
+        int idx;
+
+        for (int i = list.size() - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = list.get(i);
+            list.set(i, list.get(idx));
+            list.set(idx, temp);
+        }
+
+        Collections.sort(list);
+    }
+
+    private static <T> void sort(ArrayList<T> list, Comparator<? super T> cmp) {
+        T temp;
+        int idx;
+
+        for (int i = list.size() - 1; i > 0; i--) {
+            idx = rng.nextInt(i + 1);
+
+            temp = list.get(i);
+            list.set(i, list.get(idx));
+            list.set(idx, temp);
+        }
+
+        Collections.sort(list, cmp);
     }
 }
