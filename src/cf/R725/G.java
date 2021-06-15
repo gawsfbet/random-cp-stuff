@@ -7,29 +7,29 @@ public class G {
     static int M = 1_000_000_007;
     static Random rng = new Random();
 
-    private static long testCase(long x, long y, long a, long b) {
+    private static int testCase(int x, int y, int a, int b) {
         if (x < y) {
-            long temp = x;
+            int temp = x;
             x = y;
             y = temp;
         }
 
         if (a < b) {
-            long temp = a;
+            int temp = a;
             a = b;
             b = temp;
         }
 
         if (a > b) {
-            if (x - (a * (y / b)) >= 0) {
+            if (x / a >= y / b) {
                 return y / b;
             } else {
-                long additional = (x - y) / (a - b);
+                int additional = (x - y) / (a - b);
 
                 x -= additional * a;
                 y -= additional * b;
 
-                long pairs = y / (a + b);
+                int pairs = y / (a + b);
                 x -= pairs * (a + b);
                 y -= pairs * (a + b);
 
@@ -46,7 +46,7 @@ public class G {
         int t = in.nextInt();  // Scanner has functions to read ints, longs, strings, chars, etc.
         //in.nextLine();
         for (int tt = 1; tt <= t; ++tt) {
-            long x = in.nextLong(), y = in.nextLong(), a = in.nextLong(), b = in.nextLong();
+            int x = in.nextInt(), y = in.nextInt(), a = in.nextInt(), b = in.nextInt();
 
             out.println(testCase(x, y, a, b));
         }
